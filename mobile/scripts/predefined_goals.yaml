@@ -1,0 +1,20 @@
+goals:
+  - name: "C205A"
+    frame_id: "map"
+    position: [14.0, 0.0, 0.0]
+    orientation: [0.0, 0.0, 1.0, 0.00665814]
+
+  - name: "Home"
+    frame_id: "map"
+    position: [-1.0, -0.25, 0.0]
+    orientation: [0.0, 0.0, 0.707199, 0.707015]
+
+  - name: "C205B"
+    frame_id: "map"
+    position: [14.0, 16.0, 0.0]
+    orientation: [0.0, 0.0, -1.0, 0.000879004]
+
+  - name: "CHL"
+    frame_id: "map"
+    position: [63.0, 7.0, 0.0]
+    orientation: [0.0, 0.0, -1.0, 0.000879004]
