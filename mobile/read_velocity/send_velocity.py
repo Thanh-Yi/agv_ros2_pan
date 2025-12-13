@@ -10,7 +10,7 @@ class TeleopToSTM(Node):
         super().__init__("teleop_to_stm")
 
         # mở UART
-        self.ser = serial.Serial('/dev/ttyUSB0', 115200)
+        self.ser = serial.Serial('/dev/cp210x_stm', 115200)
 
         # sub cmd_vel
         self.sub = self.create_subscription(
