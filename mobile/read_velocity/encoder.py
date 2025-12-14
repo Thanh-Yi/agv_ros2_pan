@@ -65,13 +65,34 @@ class STM32Receiver(Node):
         odom.header.frame_id = "odom"
         odom.child_frame_id = "base_footprint"
 
-        # pose KHÔNG dùng
+        # ---- Pose (KHÔNG dùng, nhưng set covariance lớn) ----
         odom.pose.pose.position.x = 0.0
         odom.pose.pose.position.y = 0.0
+        odom.pose.pose.position.z = 0.0
 
-        # velocity DÙNG
+        odom.pose.covariance = [
+            999.0, 0.0,   0.0,   0.0,   0.0,   0.0,
+            0.0,   999.0, 0.0,   0.0,   0.0,   0.0,
+            0.0,   0.0,   999.0, 0.0,   0.0,   0.0,
+            0.0,   0.0,   0.0,   999.0, 0.0,   0.0,
+            0.0,   0.0,   0.0,   0.0,   999.0, 0.0,
+            0.0,   0.0,   0.0,   0.0,   0.0,   999.0
+        ]
+
+        # ---- Velocity (DÙNG) ----
         odom.twist.twist.linear.x = vx
+        odom.twist.twist.linear.y = 0.0
         odom.twist.twist.angular.z = wz
+
+        # ---- Twist covariance (RẤT QUAN TRỌNG) ----
+        odom.twist.covariance = [
+            0.02, 0.0,   0.0,   0.0,   0.0,   0.0,    # vx
+            0.0,  999.0, 0.0,   0.0,   0.0,   0.0,    # vy (không dùng)
+            0.0,  0.0,   999.0, 0.0,   0.0,   0.0,
+            0.0,  0.0,   0.0,   999.0, 0.0,   0.0,
+            0.0,  0.0,   0.0,   0.0,   999.0, 0.0,
+            0.0,  0.0,   0.0,   0.0,   0.0,   0.05   # wz
+        ]
 
         self.pub_odom.publish(odom)
 
