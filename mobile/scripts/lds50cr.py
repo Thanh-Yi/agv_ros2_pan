@@ -11,8 +11,8 @@ LDS-50C-R ROS2 driver — final per-sector → per-rotation publisher
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import TransformStamped
-from tf2_ros import TransformBroadcaster
+# from geometry_msgs.msg import TransformStamped
+# from tf2_ros import TransformBroadcaster
 
 import serial, time, math, bisect
 from threading import Thread, Lock
@@ -84,7 +84,7 @@ class LDS50CR(Node):
         self.pub = self.create_publisher(LaserScan, 'scan', 10)
 
         # TF broadcaster
-        self.tf_broadcaster = TransformBroadcaster(self)
+        # self.tf_broadcaster = TransformBroadcaster(self)
 
         # serial open
         try:
@@ -370,29 +370,29 @@ class LDS50CR(Node):
         msg.intensities = [float(x) for x in intens] if intens else []
         return msg
 
-    # --------------------
-    # broadcast TF base_link -> laser
-    # --------------------
-    def _send_tf(self):
-        t = TransformStamped()
-        t.header.stamp = self.get_clock().now().to_msg()
-        t.header.frame_id = 'base_link'
-        t.child_frame_id = self.laser_frame
-        t.transform.translation.x = 0.0
-        t.transform.translation.y = 0.0
-        t.transform.translation.z = 0.0
-        t.transform.rotation.x = 0.0
-        t.transform.rotation.y = 0.0
-        t.transform.rotation.z = 0.0
-        t.transform.rotation.w = 1.0
-        self.tf_broadcaster.sendTransform(t)
+    # # --------------------
+    # # broadcast TF base_link -> laser
+    # # --------------------
+    # def _send_tf(self):
+    #     t = TransformStamped()
+    #     t.header.stamp = self.get_clock().now().to_msg()
+    #     t.header.frame_id = 'base_link'
+    #     t.child_frame_id = self.laser_frame
+    #     t.transform.translation.x = 0.0
+    #     t.transform.translation.y = 0.0
+    #     t.transform.translation.z = 0.0
+    #     t.transform.rotation.x = 0.0
+    #     t.transform.rotation.y = 0.0
+    #     t.transform.rotation.z = 0.0
+    #     t.transform.rotation.w = 1.0
+    #     self.tf_broadcaster.sendTransform(t)
 
     # --------------------
     # main timer: extract packets, accumulate sectors into rotation using wrap detection
     # --------------------
     def _timer_cb(self):
         # broadcast TF first so rviz/msg filters find it
-        self._send_tf()
+        # self._send_tf()
 
         # extract newly arrived packets
         new_pkts = self._extract_packets()
