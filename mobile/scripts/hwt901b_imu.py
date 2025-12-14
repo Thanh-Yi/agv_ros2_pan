@@ -199,6 +199,24 @@ class HWT901BModbusNode(Node):
         msg.orientation.z = float(qz)
         msg.orientation.w = float(qw)
 
+        msg.orientation_covariance = [
+            0.02, 0.0,  0.0,
+            0.0,  0.02, 0.0,
+            0.0,  0.0,  0.05
+        ]
+
+        msg.angular_velocity_covariance = [
+            0.02, 0.0,  0.0,
+            0.0,  0.02, 0.0,
+            0.0,  0.0,  0.05
+        ]
+
+        msg.linear_acceleration_covariance = [
+            0.2, 0.0, 0.0,
+            0.0, 0.2, 0.0,
+            0.0, 0.0, 0.2
+        ]
+
         self.pub.publish(msg)
 
     @staticmethod
