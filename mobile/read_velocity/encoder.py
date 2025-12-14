@@ -14,8 +14,8 @@ class STM32Receiver(Node):
 
         # Open Serial port
         try:
-            self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.1)
-            self.get_logger().info("Connected to /dev/ttyUSB0")
+            self.ser = serial.Serial('/dev/cp210x_stm', 115200, timeout=0.1)
+            self.get_logger().info("Connected to /dev/STM")
         except Exception as e:
             self.get_logger().error(f"Serial open error: {e}")
             exit(1)

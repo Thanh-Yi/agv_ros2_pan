@@ -139,7 +139,7 @@
   </link>
   <joint
     name="left_wheel_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0 0.16297 -0.02"
       rpy="0 0 0" />
@@ -194,7 +194,7 @@
   </link>
   <joint
     name="right_wheel_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0 -0.16297 -0.02"
       rpy="0 0 0" />
@@ -355,7 +355,7 @@
   </link>
   <joint
     name="truocphai_tren_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0.25109 -0.1581 -0.01"
       rpy="0 0 0" />
@@ -415,7 +415,7 @@
   </link>
   <joint
     name="truocphai_duoi_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0 0 -0.06"
       rpy="0 0 0" />
@@ -470,7 +470,7 @@
   </link>
   <joint
     name="truoctrai_tren_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0.25092 0.16015 -0.01"
       rpy="0 0 0" />
@@ -530,7 +530,7 @@
   </link>
   <joint
     name="truoctrai_duoi_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0 0 -0.058"
       rpy="0 0 0" />
@@ -585,7 +585,7 @@
   </link>
   <joint
     name="traisau_tren_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="-0.25098 0.15995 -0.01"
       rpy="0 0 0" />
@@ -645,7 +645,7 @@
   </link>
   <joint
     name="traisau_duoi_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0 0 -0.06"
       rpy="0 0 0" />
@@ -700,7 +700,7 @@
   </link>
   <joint
     name="phaisau_tren_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="-0.25115 -0.1584 -0.01"
       rpy="0 0 0" />
@@ -760,7 +760,7 @@
   </link>
   <joint
     name="phaisau_duoi_jn"
-    type="continuous">
+    type="fixed">
     <origin
       xyz="0 0 -0.058"
       rpy="0 0 0" />
