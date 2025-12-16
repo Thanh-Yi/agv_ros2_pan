@@ -1,0 +1,9 @@
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/uninstall.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/mobile_uninstall.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/test.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/edit_cache.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/rebuild_cache.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/list_install_components.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/install.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/install/local.dir
+/home/pan/ros2_ws/src/build/mobile/CMakeFiles/install/strip.dir

@@ -1,0 +1,17 @@
+[33mCMake Warning at /home/pan/ros2_ws/install/wt901_driver/share/wt901_driver/cmake/ament_cmake_export_include_directories-extras.cmake:11 (message):
+  Package 'wt901_driver' exports the include directory
+  '/home/pan/ros2_ws/install/wt901_driver/share/wt901_driver/cmake/../../../include'
+  which doesn't exist
+Call Stack (most recent call first):
+  /home/pan/ros2_ws/install/wt901_driver/share/wt901_driver/cmake/wt901_driverConfig.cmake:41 (include)
+  CMakeLists.txt:15 (find_package)
+
+[0m
+[31mCMake Error at /home/pan/ros2_ws/install/wt901_driver/share/wt901_driver/cmake/ament_cmake_export_libraries-extras.cmake:48 (message):
+  Package 'wt901_driver' exports the library 'wt901_driver' which couldn't be
+  found
+Call Stack (most recent call first):
+  /home/pan/ros2_ws/install/wt901_driver/share/wt901_driver/cmake/wt901_driverConfig.cmake:41 (include)
+  CMakeLists.txt:15 (find_package)
+
+[0m

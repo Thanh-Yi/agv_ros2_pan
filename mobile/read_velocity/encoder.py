@@ -2,11 +2,11 @@
 import rclpy
 from rclpy.node import Node
 
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import TwistWithCovarianceStamped, Twist
 
 import serial
 import re
+import math
 
 
 class STM32Receiver(Node):
@@ -14,29 +14,34 @@ class STM32Receiver(Node):
         super().__init__("stm32_receiver")
 
         # ===== Publishers =====
-        self.pub_odom = self.create_publisher(
-            Odometry, "/wheel_odom", 10
+        self.pub_twist_cov = self.create_publisher(
+            TwistWithCovarianceStamped,
+            "/wheel_twist",
+            50
         )
 
         # (optional) debug
         self.pub_twist = self.create_publisher(
-            Twist, "/wheel_speed", 10
+            Twist,
+            "/wheel_speed",
+            30
         )
 
         # ===== Serial =====
         try:
             self.ser = serial.Serial(
-                "/dev/cp210x_stm", 115200, timeout=0.1
+                "/dev/cp210x_stm", 115200, timeout=0
             )
             self.get_logger().info("STM32 serial connected")
         except Exception as e:
-            self.get_logger().error(f"Serial open error: {e}")
+            self.get_logger().fatal(f"Serial open error: {e}")
             raise SystemExit
 
         # ===== Timer =====
         self.timer = self.create_timer(0.02, self.loop)  # 50 Hz
 
         self.wheel_base = 0.42
+        self.stable_count = 0
 
     def loop(self):
         try:
@@ -51,56 +56,62 @@ class STM32Receiver(Node):
         if len(nums) < 2:
             return
 
-        vL = float(nums[0])
-        vR = float(nums[1])
+        try:
+            vL = float(nums[0])
+            vR = float(nums[1])
+        except ValueError:
+            return
+
+        if not (math.isfinite(vL) and math.isfinite(vR)):
+            return
 
         vx = 0.5 * (vL + vR)
         wz = (vR - vL) / self.wheel_base
 
+        if not (math.isfinite(vx) and math.isfinite(wz)):
+            return
+
+        # startup filter (tránh frame rác lúc đầu)
+        self.stable_count += 1
+        if self.stable_count < 10:
+            return
+
         now = self.get_clock().now().to_msg()
+        if now.sec == 0 and now.nanosec == 0:
+            return
 
-        # ===== Odometry (CHO EKF) =====
-        odom = Odometry()
-        odom.header.stamp = now
-        odom.header.frame_id = "odom"
-        odom.child_frame_id = "base_footprint"
+        # ===== TwistWithCovarianceStamped =====
+        msg = TwistWithCovarianceStamped()
+        msg.header.stamp = now
+        msg.header.frame_id = "base_footprint"
 
-        # ---- Pose (KHÔNG dùng, nhưng set covariance lớn) ----
-        odom.pose.pose.position.x = 0.0
-        odom.pose.pose.position.y = 0.0
-        odom.pose.pose.position.z = 0.0
+        msg.twist.twist.linear.x = vx
+        msg.twist.twist.linear.y = 0.0
+        msg.twist.twist.linear.z = 0.0
 
-        odom.pose.covariance = [
-            999.0, 0.0,   0.0,   0.0,   0.0,   0.0,
-            0.0,   999.0, 0.0,   0.0,   0.0,   0.0,
-            0.0,   0.0,   999.0, 0.0,   0.0,   0.0,
-            0.0,   0.0,   0.0,   999.0, 0.0,   0.0,
-            0.0,   0.0,   0.0,   0.0,   999.0, 0.0,
-            0.0,   0.0,   0.0,   0.0,   0.0,   999.0
+        msg.twist.twist.angular.x = 0.0
+        msg.twist.twist.angular.y = 0.0
+        msg.twist.twist.angular.z = wz
+
+        SMALL = 0.02
+        BIG   = 1e3
+
+        msg.twist.covariance = [
+            SMALL, 0.0,   0.0,   0.0,   0.0,   0.0,   # vx
+            0.0,   BIG,   0.0,   0.0,   0.0,   0.0,   # vy
+            0.0,   0.0,   BIG,   0.0,   0.0,   0.0,
+            0.0,   0.0,   0.0,   BIG,   0.0,   0.0,
+            0.0,   0.0,   0.0,   0.0,   BIG,   0.0,
+            0.0,   0.0,   0.0,   0.0,   0.0,   SMALL # wz
         ]
 
-        # ---- Velocity (DÙNG) ----
-        odom.twist.twist.linear.x = vx
-        odom.twist.twist.linear.y = 0.0
-        odom.twist.twist.angular.z = wz
+        self.pub_twist_cov.publish(msg)
 
-        # ---- Twist covariance (RẤT QUAN TRỌNG) ----
-        odom.twist.covariance = [
-            0.02, 0.0,   0.0,   0.0,   0.0,   0.0,    # vx
-            0.0,  999.0, 0.0,   0.0,   0.0,   0.0,    # vy (không dùng)
-            0.0,  0.0,   999.0, 0.0,   0.0,   0.0,
-            0.0,  0.0,   0.0,   999.0, 0.0,   0.0,
-            0.0,  0.0,   0.0,   0.0,   999.0, 0.0,
-            0.0,  0.0,   0.0,   0.0,   0.0,   0.05   # wz
-        ]
-
-        self.pub_odom.publish(odom)
-
-        # ===== Twist (DEBUG) =====
-        tw = Twist()
-        tw.linear.x = vx
-        tw.angular.z = wz
-        self.pub_twist.publish(tw)
+        # ===== DEBUG Twist =====
+        dbg = Twist()
+        dbg.linear.x = vx
+        dbg.angular.z = wz
+        self.pub_twist.publish(dbg)
 
         self.get_logger().info(
             f"vx={vx:.3f} m/s  wz={wz:.3f} rad/s"
@@ -117,3 +128,4 @@ def main(args=None):
 
 if __name__ == "__main__":
     main()
+

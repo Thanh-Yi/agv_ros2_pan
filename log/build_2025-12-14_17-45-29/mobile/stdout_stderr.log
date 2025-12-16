@@ -1,0 +1,93 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.12 (/home/pan/ros2_humble/install/ament_cmake/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Found rclpy: 3.3.19 (/home/pan/ros2_humble/install/rclpy/share/rclpy/cmake)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/pan/ros2_ws/src/build/mobile
+-- Install configuration: ""
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/spawn_obstacles.launch.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/agv.launch.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/setup.launch.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/gazebo.launch.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/nav2.launch.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/display.launch
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/display.launch.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/launch/gazebo.launch
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/urdf
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/urdf/mobile.csv
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/urdf/mobile.urdf
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/truoctrai_tren.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/laser.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/imu.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/left_wheel.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/base_footprint.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/truoctrai_duoi.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/right_wheel.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/truocphai_tren.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/phaisau_tren.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/phaisau_duoi.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/traisau_tren.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/base_link.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/truocphai_duoi.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/traisau_duoi.STL
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/config
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/config/nav2_params.yaml
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/config/ekf.yaml
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/map
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/map/map.yaml
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/map/map.pgm
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/world
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/world/maze
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/rviz
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/rviz/rviz.rviz
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/moving_obstacle.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/teleop_gui.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/hwt901b.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/monitor_tab.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/goal_markers.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/lidar_filter.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/lds50cr.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/hwt901b_imu.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/predefined_goals.yaml
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/history.yaml
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/__pycache__
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/scripts/__pycache__/monitor_tab.cpython-310.pyc
+-- Up-to-date: /home/pan/ros2_ws/src/install/mobile/share/mobile/world
+-- Up-to-date: /home/pan/ros2_ws/src/install/mobile/share/mobile/world/maze
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/teleop_gui.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/monitor_tab.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/lidar_filter.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/lds50cr.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/hwt901b.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/moving_obstacle.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/lib/mobile/goal_markers.py
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/ament_index/resource_index/package_run_dependencies/mobile
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/ament_index/resource_index/parent_prefix_path/mobile
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/environment/ament_prefix_path.sh
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/environment/ament_prefix_path.dsv
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/environment/path.sh
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/environment/path.dsv
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/local_setup.bash
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/local_setup.sh
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/local_setup.zsh
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/local_setup.dsv
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/package.dsv
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/ament_index/resource_index/packages/mobile
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/cmake/mobileConfig.cmake
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/cmake/mobileConfig-version.cmake
+-- Installing: /home/pan/ros2_ws/src/install/mobile/share/mobile/package.xml

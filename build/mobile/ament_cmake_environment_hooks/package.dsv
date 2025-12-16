@@ -1,0 +1,4 @@
+source;share/mobile/local_setup.bash
+source;share/mobile/local_setup.dsv
+source;share/mobile/local_setup.sh
+source;share/mobile/local_setup.zsh
