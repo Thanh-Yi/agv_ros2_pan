@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -shared -Wl,-soname,libwt901_driver.so -o libwt901_driver.so CMakeFiles/wt901_driver.dir/src/serial.c.o CMakeFiles/wt901_driver.dir/src/wit_c_sdk.c.o CMakeFiles/wt901_driver.dir/src/wt901_driver.c.o 

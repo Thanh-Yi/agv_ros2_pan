@@ -476,7 +476,7 @@ class LDS50CR(Node):
         if scan_msg:
             self.pub.publish(scan_msg)
 
-        self.get_logger().info(f"Published rotation: pts={len(assembled['angles'])} cov={assembled['coverage']:.1f}° packets={len(self._collected_pkts)}")
+        #self.get_logger().info(f"Published rotation: pts={len(assembled['angles'])} cov={assembled['coverage']:.1f}° packets={len(self._collected_pkts)}")
         # keep prev_resampled as-is to allow temporal smoothing continuity across rotations
         # If you prefer clearing smoothing per-rotation, uncomment:
         # self.prev_resampled = None
