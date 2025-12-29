@@ -121,8 +121,8 @@ class STM32ReceiverENC(Node):
             if (now_ns - self.last_update_ns_R) > 500_000_000:
                 continue
 
-            vx = 0.5 * (self.vL_mps + self.vR_mps)
-            wz = (self.vR_mps - self.vL_mps) / self.L
+            vx = 0.5 * ((-self.vL_mps) + self.vR_mps)
+            wz = (self.vR_mps + self.vL_mps) / self.L
 
             if not (math.isfinite(vx) and math.isfinite(wz)):
                 continue

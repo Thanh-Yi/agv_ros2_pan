@@ -22,7 +22,7 @@ class STMBridge(Node):
         self.declare_parameter("baud", 115200)
 
         self.declare_parameter("wheel_radius", 0.085)  # m
-        self.declare_parameter("wheel_base", 0.325)    # m
+        self.declare_parameter("wheel_base", 0.35)    # m
         self.declare_parameter("gear_ratio", 1.0)
         self.declare_parameter("max_rpm", 300)
 
@@ -142,10 +142,10 @@ class STMBridge(Node):
             if self.vL_mps is None or self.vR_mps is None:
                 continue
 
-            vx = 0.5 * (self.vL_mps + self.vR_mps)
+            vx = 0.5 * ((-self.vL_mps) + self.vR_mps)
             if abs(vx)<0.001:
                 vx=0.0
-            wz = (self.vR_mps - self.vL_mps) / self.L
+            wz = (self.vR_mps + self.vL_mps) / self.L
             if not (math.isfinite(vx) and math.isfinite(wz)):
                 continue
 

@@ -57,7 +57,7 @@ private:
 
     /* ===== header ===== */
     imu_msg.header.stamp = this->get_clock()->now();
-    imu_msg.header.frame_id = "imu_link";
+    imu_msg.header.frame_id = "imu";
 
     /* ===== orientation (EKF DÙNG) ===== */
     imu_msg.orientation.x = q.x();

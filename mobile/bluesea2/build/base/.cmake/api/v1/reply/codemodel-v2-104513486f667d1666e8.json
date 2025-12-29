@@ -1,0 +1,233 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-153a7deb35e2332f79eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17
+					]
+				},
+				{
+					"build" : "base__py",
+					"jsonFile" : "directory-base__py-75e2363ecc9a97c52f86.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/pan/ros2_ws/src/mobile/bluesea2/build/base/base__py",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "base",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_base_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_base_egg-38b1bbfc3b315950a027.json",
+					"name" : "ament_cmake_python_build_base_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_copy_base::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_copy_base-080ff38f7b24964ee094.json",
+					"name" : "ament_cmake_python_copy_base",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base-067935487cb43c27b367.json",
+					"name" : "base",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__cpp-09d7caab57c882bce0dd.json",
+					"name" : "base__cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "base__py::@3a9983b86eaeaa6dc23c",
+					"jsonFile" : "target-base__py-67dc1930fbdd582cd9f1.json",
+					"name" : "base__py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_generator_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_generator_c-a22dec92fa0dbc528270.json",
+					"name" : "base__rosidl_generator_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_generator_py::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_generator_py-4b0a2c87e12e8dbfa0a6.json",
+					"name" : "base__rosidl_generator_py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_c-34c0d9d2dbbdcf6ce715.json",
+					"name" : "base__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_c__pyext-7648c0722b6934e0bbe1.json",
+					"name" : "base__rosidl_typesupport_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_cpp-28308a5f08a30396d368.json",
+					"name" : "base__rosidl_typesupport_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_fastrtps_c-67882cdffd5dd08cdb12.json",
+					"name" : "base__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_fastrtps_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_fastrtps_c__pyext-28e6acbbf1dcd069de65.json",
+					"name" : "base__rosidl_typesupport_fastrtps_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_fastrtps_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_fastrtps_cpp-ac6f112b9eb3e27aa614.json",
+					"name" : "base__rosidl_typesupport_fastrtps_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_introspection_c-b8107f6a597706ba2132.json",
+					"name" : "base__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_introspection_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_introspection_c__pyext-969ee24b0a3398fa65a8.json",
+					"name" : "base__rosidl_typesupport_introspection_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base__rosidl_typesupport_introspection_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base__rosidl_typesupport_introspection_cpp-5fd8c3100962f7cace08.json",
+					"name" : "base__rosidl_typesupport_introspection_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "base_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-base_uninstall-47df3ddbd5b5fd6edcb3.json",
+					"name" : "base_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-9206da4e95dbd4e4521a.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/pan/ros2_ws/src/mobile/bluesea2/build/base",
+		"source" : "/home/pan/ros2_ws/src/mobile/bluesea2/src/base"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

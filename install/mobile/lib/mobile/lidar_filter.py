@@ -2,71 +2,153 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-import math
 
-class LidarFilter(Node):
+import serial, time, math
+from threading import Thread, Lock
+
+def u16_le(buf, off):
+    return buf[off] | (buf[off+1] << 8)
+
+class LDS50CR(Node):
     def __init__(self):
-        super().__init__('lidar_filter_node')
+        super().__init__('lds50cr')
 
-        # ---- Parameters ----
-        self.declare_parameter('input_topic', '/gazebo_ros_laser/out')
-        self.declare_parameter('output_topic', '/scan_filtered')
-        self.declare_parameter('min_radius', 0.40)
+        self.declare_parameter('port', '/dev/cp210x_lidar')
+        self.declare_parameter('baud', 921600)
+        self.declare_parameter('laser_frame', 'laser')
+        self.declare_parameter('min_range', 0.4)
+        self.declare_parameter('max_range', 40.0)
+        self.declare_parameter('wrap_threshold_deg', 10.0)
 
-        input_topic = self.get_parameter('input_topic').get_parameter_value().string_value
-        output_topic = self.get_parameter('output_topic').get_parameter_value().string_value
-        self.min_radius = self.get_parameter('min_radius').get_parameter_value().double_value
+        p = self.get_parameter
+        self.port = p('port').value
+        self.baud = int(p('baud').value)
+        self.frame = p('laser_frame').value
+        self.min_range = float(p('min_range').value)
+        self.max_range = float(p('max_range').value)
+        self.wrap = float(p('wrap_threshold_deg').value)
 
-        # ---- Subscribers / Publishers ----
-        self.sub_scan = self.create_subscription(
-            LaserScan,
-            input_topic,
-            self.scan_callback,
-            10
-        )
-        self.pub_filtered = self.create_publisher(LaserScan, output_topic, 10)
+        self.pub = self.create_publisher(LaserScan, 'scan_raw', 10)
 
-        self.get_logger().info(
-            f'Lidar filter active: filtering radius < {self.min_radius} m\n'
-            f'Input: {input_topic}\nOutput: {output_topic}'
-        )
+        self.ser = serial.Serial(self.port, self.baud, timeout=0.2)
 
-    def scan_callback(self, scan_msg: LaserScan):
-        # Copy header & meta info
-        filtered_scan = LaserScan()
-        filtered_scan.header = scan_msg.header
-        filtered_scan.angle_min = scan_msg.angle_min
-        filtered_scan.angle_max = scan_msg.angle_max
-        filtered_scan.angle_increment = scan_msg.angle_increment
-        filtered_scan.time_increment = scan_msg.time_increment
-        filtered_scan.scan_time = scan_msg.scan_time
-        filtered_scan.range_min = scan_msg.range_min
-        filtered_scan.range_max = scan_msg.range_max
+        self.buf = bytearray()
+        self.lock = Lock()
+        self.running = True
+        Thread(target=self._reader, daemon=True).start()
 
-        # ---- Filter ----
-        filtered_ranges = []
-        angle = scan_msg.angle_min
-        for r in scan_msg.ranges:
-            if math.isfinite(r) and r < self.min_radius:
-                filtered_ranges.append(float('inf'))
+        self.pkts = []
+        self.last_start = None
+
+        self.timer = self.create_timer(0.03, self._tick)
+
+    def _reader(self):
+        while self.running and rclpy.ok():
+            data = self.ser.read(8192)
+            if data:
+                with self.lock:
+                    self.buf.extend(data)
             else:
-                filtered_ranges.append(r)
-            angle += scan_msg.angle_increment
+                time.sleep(0.002)
 
-        filtered_scan.ranges = filtered_ranges
-        filtered_scan.intensities = scan_msg.intensities
+    def _extract(self):
+        hdr = b'\xCF\xFA'
+        with self.lock:
+            data = bytes(self.buf)
 
-        # ---- Publish ----
-        self.pub_filtered.publish(filtered_scan)
+        pos = 0
+        out = []
+        while True:
+            h = data.find(hdr, pos)
+            if h < 0 or h + 8 > len(data):
+                break
+            N = u16_le(data, h+2)
+            need = 8 + N*3
+            if h + need > len(data):
+                break
+            out.append(data[h:h+need])
+            pos = h + need
 
+        if pos:
+            with self.lock:
+                del self.buf[:pos]
+        return out
 
-def main(args=None):
-    rclpy.init(args=args)
-    node = LidarFilter()
-    rclpy.spin(node)
+    def _tick(self):
+        raws = self._extract()
+        for raw in raws:
+            start = u16_le(raw, 4) * 0.1
+            sector = u16_le(raw, 6) * 0.1
+
+            if self.last_start is not None:
+                if start < self.last_start - self.wrap:
+                    self._publish()
+                    self.pkts = []
+
+            self.pkts.append((raw, start, sector))
+            self.last_start = start
+
+    def _publish(self):
+        if not self.pkts:
+            return
+
+        NUM = 1800  # 0.2°
+        ranges = [float('inf')] * NUM
+        intens = [0.0] * NUM
+
+        for raw, start, sector in self.pkts:
+            N = u16_le(raw, 2)
+            off = 8
+
+            for i in range(N):
+                # ✅ FIX CUỐI CÙNG: LẤY TÂM SECTOR
+                angle = (start + (i + 0.5) * sector / N) % 360.0
+                idx = int(angle / 360.0 * NUM)
+                if idx < 0 or idx >= NUM:
+                    off += 3
+                    continue
+
+                r = (raw[off+1] | (raw[off+2] << 8)) / 1000.0
+                inten = float(raw[off])
+                off += 3
+
+                if not (self.min_range <= r <= self.max_range):
+                    continue
+
+                # 1 BIN = 1 ĐIỂM
+                if ranges[idx] != float('inf'):
+                    continue
+
+                ranges[idx] = r
+                intens[idx] = inten
+
+        msg = LaserScan()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.frame
+        msg.angle_min = 0.0
+        msg.angle_max = 2 * math.pi
+        msg.angle_increment = msg.angle_max / NUM
+        msg.range_min = self.min_range
+        msg.range_max = self.max_range
+        msg.ranges = ranges
+        msg.intensities = intens
+
+        self.pub.publish(msg)
+
+    def destroy_node(self):
+        self.running = False
+        self.ser.close()
+        super().destroy_node()
+
+def main():
+    rclpy.init()
+    node = LDS50CR()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
     node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()

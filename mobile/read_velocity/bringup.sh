@@ -1,33 +1,98 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-WS="/home/pan/ros2_ws"
-EKF_YAML="${WS}/src/mobile/config/ekf.yaml"
-ROS_DISTRO="${ROS_DISTRO:-humble}"
+WS="$HOME/ros2_ws"
+PIDDIR="/tmp/robot_run_pids"
+LOGDIR="/tmp/robot_logs"
 
-cleanup() {
-  echo ""
-  echo "[CLEANUP] Stopping processes..."
-  # kill job(s) started by this script (launch)
-  jobs -p | xargs -r kill 2>/dev/null || true
+ENCODER_PY="$WS/src/mobile/read_velocity/gui_encoder.py"
+
+# ---------- Helpers ----------
+safe_source_overlay() {
+  set +u
+  # shellcheck disable=SC1091
+  source "$WS/install/setup.bash"
+  set -u
 }
-trap cleanup EXIT INT TERM
 
-echo "[1/5] cd ros2_ws"
-cd ros2_ws
+stop_all() {
+  echo -e "\n[bringup] Stopping..."
 
-echo "[2/5] colcon build"
-colcon build 
+  shopt -s nullglob
+  local pids=()
 
-# echo "[3/5] source ROS + workspace"
-# source install/setup.bash
+  for f in "$PIDDIR"/*.pid; do
+    local pid=""
+    pid="$(cat "$f" 2>/dev/null || true)"
+    [[ -n "${pid:-}" ]] && pids+=("$pid")
+  done
 
-echo "[4/5] start launch: ros2 launch mobile setup.launch.py"
-ros2 launch mobile setup.launch.py &
-# LAUNCH_PID=$!
+  # INT -> TERM -> KILL
+  for sig in INT TERM KILL; do
+    for pid in "${pids[@]}"; do
+      if kill -0 "$pid" 2>/dev/null; then
+        kill "-$sig" "$pid" 2>/dev/null || true
+      fi
+    done
+    sleep 0.6
+  done
 
-# # chờ 1 chút cho node lên ổn định (tăng/giảm tùy máy)
-# sleep 2
+  rm -f "$PIDDIR"/*.pid 2>/dev/null || true
+  echo "[bringup] Stopped."
+}
 
-# echo "[5/5] start EKF with params: ${EKF_YAML}"
-# ros2 run robot_localization ekf_node --ros-args --params-file "${EKF_YAML}"
+start_all() {
+  mkdir -p "$PIDDIR" "$LOGDIR"
+  rm -f "$PIDDIR"/*.pid 2>/dev/null || true
+
+  echo "[bringup] Building workspace..."
+  cd "$WS"
+  colcon build
+
+  echo "[bringup] Sourcing overlay..."
+  safe_source_overlay
+
+  echo "[bringup] Starting encoder + imu (logs in $LOGDIR)"
+
+  # Encoder
+  (
+    set -euo pipefail
+    cd "$WS"
+    set +u; source install/setup.bash; set -u
+    echo $$ > "$PIDDIR/encoder.pid"
+    exec python3 "$ENCODER_PY" >>"$LOGDIR/encoder.log" 2>&1
+  ) &
+
+  # IMU
+  (
+    set -euo pipefail
+    cd "$WS"
+    set +u; source install/setup.bash; set -u
+    echo $$ > "$PIDDIR/imu.pid"
+    exec ros2 run wt901_ros2 wt901_node >>"$LOGDIR/imu.log" 2>&1
+  ) &
+
+  echo "[bringup] Started:"
+  echo "  - encoder: tail -f $LOGDIR/encoder.log"
+  echo "  - imu:     tail -f $LOGDIR/imu.log"
+  echo "  - stop:    $0 stop"
+}
+
+# ---------- Main ----------
+case "${1:-start}" in
+  start)
+    trap 'stop_all; exit 0' INT TERM
+    start_all
+    # giữ process sống để bắt Ctrl+C
+    while true; do sleep 1; done
+    ;;
+  stop)
+    stop_all
+    ;;
+  *)
+    echo "Usage:"
+    echo "  $0        # start"
+    echo "  $0 stop   # stop all"
+    exit 1
+    ;;
+esac

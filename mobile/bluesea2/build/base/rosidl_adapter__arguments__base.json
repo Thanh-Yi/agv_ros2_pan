@@ -1,0 +1,6 @@
+{
+  "package_name": "base",
+  "non_idl_tuples": [
+    "/home/pan/ros2_ws/src/mobile/bluesea2/src/base:srv/Control.srv"
+  ]
+}

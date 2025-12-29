@@ -22,6 +22,7 @@
 /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/base_link.STL
 /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/truocphai_duoi.STL
 /home/pan/ros2_ws/src/install/mobile/share/mobile/meshes/traisau_duoi.STL
+/home/pan/ros2_ws/src/install/mobile/share/mobile/config/slam_toolbox_params.yaml
 /home/pan/ros2_ws/src/install/mobile/share/mobile/config/nav2_params.yaml
 /home/pan/ros2_ws/src/install/mobile/share/mobile/config/ekf.yaml
 /home/pan/ros2_ws/src/install/mobile/share/mobile/map/map.yaml

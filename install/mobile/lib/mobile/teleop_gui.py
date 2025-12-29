@@ -496,8 +496,8 @@ if __name__ == "__main__":
     rclpy.init()
     ros_wrapper = RosNodeWrapper()
 
-    goals_path = "/home/ubunturic/ros2_ws/src/mobile/scripts/predefined_goals.yaml"
-    history_path = "/home/ubunturic/ros2_ws/src/mobile/scripts/history.yaml"
+    goals_path = "/home/pan/ros2_ws/src/mobile/scripts/predefined_goals.yaml"
+    history_path = "/home/pan/ros2_ws/src/mobile/scripts/history.yaml"
 
     app = QApplication(sys.argv)
     apply_modern_theme(app)
