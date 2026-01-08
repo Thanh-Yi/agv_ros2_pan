@@ -76,6 +76,6 @@ def generate_launch_description():
         robot_state_publisher,
         joint_state_publisher,
         ekf_node,
-        slam_toolbox_launch,
+#        slam_toolbox_launch,
         #rviz_node,
     ])

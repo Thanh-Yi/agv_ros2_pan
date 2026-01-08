@@ -22,8 +22,8 @@ bluesea_node:
     soft_resample: false
     with_checksum: true
     reversed: false
-    min_dist: 0.3
-    max_dist: 50.0
+    min_dist: 0.4
+    max_dist: 40.0
     error_circle: 3
     error_scale: 0.9
 #CONNECT#

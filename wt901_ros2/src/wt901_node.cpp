@@ -21,10 +21,10 @@ public:
       rclcpp::shutdown();
       return;
     }
-
+    
     /* ===== publisher ===== */
     imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>(
-      "/imu/data", 10);
+      "/imu/data", 100);
 
     /* ===== timer ===== */
     timer_ = this->create_wall_timer(

@@ -19,6 +19,13 @@ static volatile char s_cDataUpdate = 0;
 static void SensorDataUpdata(uint32_t uiReg, uint32_t uiRegNum);
 static void SensorUartSend(uint8_t *p_data , uint32_t uiSize);
 
+/* DONG DUOC THEM VAO XOA NGAY NEU THAY LOI */
+static void wt_delay_ms(uint16_t ms)
+{
+    usleep((useconds_t)ms * 1000);
+} 
+/* TU CHO NAY KHONG DUOC PHEP XOA */
+
 /* ====== INIT (copy từ main.c) ====== */
 int wt901_init(const char *dev, int baud)
 {
@@ -32,9 +39,18 @@ int wt901_init(const char *dev, int baud)
     WitInit(WIT_PROTOCOL_MODBUS, 0xff);
     WitRegisterCallBack(SensorDataUpdata);
     WitSerialWriteRegister(SensorUartSend);
+    
+    //WitDelayMsRegister(wt_delay_ms);		//CAN XOA DONG NAY NEU THAY LOI
 
     printf("WT901 init OK\n");
     return 0;
+}
+
+// Xoa wt901_set_zero neu thay loi
+int wt901_set_zero(void)
+{
+    // gọi trong C cho chắc, khỏi dính C++ name mangling
+    return (WitSetForReset() == WIT_HAL_OK) ? 0 : -1;
 }
 
 /* ====== STEP = 1 vòng while(1) của main.c ====== */

@@ -18,7 +18,7 @@ class STMBridge(Node):
         super().__init__("stm_bridge")
 
         # ===== params =====
-        self.declare_parameter("port", "/dev/cp210x_stm")  # đúng cái đang đọc encoder
+        self.declare_parameter("port", "/dev/ttyACM1")  # đúng cái đang đọc encoder
         self.declare_parameter("baud", 115200)
 
         self.declare_parameter("wheel_radius", 0.085)  # m
