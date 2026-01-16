@@ -78,7 +78,20 @@ int wt901_get_angle(float *roll, float *pitch, float *yaw)
     *pitch = sReg[Pitch] / 32768.0f * 180.0f;
     *yaw   = sReg[Yaw]   / 32768.0f * 180.0f;
 
-    s_cDataUpdate = 0;
+    s_cDataUpdate = ~ANGLE_UPDATE;
+    return 1;
+}
+
+int wt901_get_gyro(float *gx_dps, float *gy_dps, float *gz_dps)
+{
+    if (!(s_cDataUpdate & GYRO_UPDATE))
+        return 0;
+
+    *gx_dps = sReg[GX]  / 32768.0f * 2000.0f;
+    *gy_dps = sReg[GY] / 32768.0f * 2000.0f;
+    *gz_dps = sReg[GZ]   / 32768.0f * 2000.0f;
+
+    s_cDataUpdate = ~GYRO_UPDATE;
     return 1;
 }
 

@@ -23,8 +23,11 @@ public:
     }
     
     /* ===== publisher ===== */
-    imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>(
-      "/imu/data", 100);
+	imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>(
+	  "/imu/data",
+	  rclcpp::QoS(rclcpp::KeepLast(50)).reliable().durability_volatile()
+	);
+
 
     /* ===== timer ===== */
     timer_ = this->create_wall_timer(
@@ -66,9 +69,24 @@ private:
     imu_msg.orientation.w = q.w();
 
     /* ===== angular velocity (chưa dùng) ===== */
-    imu_msg.angular_velocity.x = 0.0;
-    imu_msg.angular_velocity.y = 0.0;
-    imu_msg.angular_velocity.z = 0.0;
+    float gx_dps, gy_dps, gz_dps;
+    if (wt901_get_gyro(&gx_dps, &gy_dps, &gz_dps)) {
+	imu_msg.angular_velocity.x = gx_dps * M_PI / 180.0;
+	imu_msg.angular_velocity.y = gy_dps * M_PI / 180.0;
+	imu_msg.angular_velocity.z = gz_dps * M_PI / 180.0;
+
+	imu_msg.angular_velocity_covariance = {
+	    0.02, 0.0, 0.0,
+	    0.0, 0.02, 0.0,
+	    0.0, 0.0, 0.05
+	};
+    } else {
+      // vòng này chưa có gyro update -> báo không có
+      	imu_msg.angular_velocity.x = 0.0;
+	imu_msg.angular_velocity.y = 0.0;
+	imu_msg.angular_velocity.z = 0.0;
+	imu_msg.angular_velocity_covariance[0] = -1;
+    }
 
     /* ===== linear acceleration (chưa dùng) ===== */
     imu_msg.linear_acceleration.x = 0.0;
@@ -85,7 +103,7 @@ private:
     };
 
     // gyro & acc chưa dùng
-    imu_msg.angular_velocity_covariance[0] = -1;
+    //imu_msg.angular_velocity_covariance[0] = -1;
     imu_msg.linear_acceleration_covariance[0] = -1;
 
     /* ===== publish ===== */

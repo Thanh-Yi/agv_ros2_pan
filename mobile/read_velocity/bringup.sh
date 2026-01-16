@@ -1,98 +1,60 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SESSION="mobile"
+
+# ====== Ports ======
+LIDAR_DEV="/dev/cp210x_lidar"
+CAN_DEV="/dev/ch34x_can"
+IMU_DEV="/dev/ch34x_imu"
+
+# ====== Workspace ======
 WS="$HOME/ros2_ws"
-PIDDIR="/tmp/robot_run_pids"
-LOGDIR="/tmp/robot_logs"
 
-ENCODER_PY="$WS/src/mobile/read_velocity/gui_encoder.py"
+# (Tuỳ bạn) source ROS distro trước nếu cần:
+# source /opt/ros/humble/setup.bash
 
-# ---------- Helpers ----------
-safe_source_overlay() {
-  set +u
-  # shellcheck disable=SC1091
-  source "$WS/install/setup.bash"
-  set -u
-}
+echo "[1/3] Configure serial ports..."
+sudo stty -F "$LIDAR_DEV" 921600 raw -echo
+sudo stty -F "$CAN_DEV"   2000000 raw -echo
+sudo stty -F "$IMU_DEV"   115200  raw -echo
 
-stop_all() {
-  echo -e "\n[bringup] Stopping..."
+echo "[2/3] Build once (incremental)..."
+cd "$WS"
+colcon build
+source install/setup.bash
 
-  shopt -s nullglob
-  local pids=()
+echo "[3/3] Launch everything in tmux session: $SESSION"
 
-  for f in "$PIDDIR"/*.pid; do
-    local pid=""
-    pid="$(cat "$f" 2>/dev/null || true)"
-    [[ -n "${pid:-}" ]] && pids+=("$pid")
-  done
+# Nếu session đã tồn tại thì không tạo mới
+if tmux has-session -t "$SESSION" 2>/dev/null; then
+  echo "Session '$SESSION' already exists."
+  echo "Attach with: tmux attach -t $SESSION"
+  exit 0
+fi
 
-  # INT -> TERM -> KILL
-  for sig in INT TERM KILL; do
-    for pid in "${pids[@]}"; do
-      if kill -0 "$pid" 2>/dev/null; then
-        kill "-$sig" "$pid" 2>/dev/null || true
-      fi
-    done
-    sleep 0.6
-  done
+# Tạo session mới (detached)
+tmux new-session -d -s "$SESSION" -n "can"
 
-  rm -f "$PIDDIR"/*.pid 2>/dev/null || true
-  echo "[bringup] Stopped."
-}
+# Window 1: CAN python
+tmux send-keys -t "$SESSION:can" "cd $WS && source install/setup.bash && python3 $WS/src/mobile/read_velocity/can_communicate.py" C-m
 
-start_all() {
-  mkdir -p "$PIDDIR" "$LOGDIR"
-  rm -f "$PIDDIR"/*.pid 2>/dev/null || true
+# Window 2: IMU wt901
+tmux new-window -t "$SESSION" -n "imu"
+tmux send-keys -t "$SESSION:imu" "cd $WS && source install/setup.bash && ros2 run wt901_ros2 wt901_node" C-m
 
-  echo "[bringup] Building workspace..."
-  cd "$WS"
-  colcon build
+# Window 3: LiDAR bluesea2
+tmux new-window -t "$SESSION" -n "lidar"
+tmux send-keys -t "$SESSION:lidar" "cd $WS && source install/setup.bash && ros2 launch bluesea2 uart_lidar.launch" C-m
 
-  echo "[bringup] Sourcing overlay..."
-  safe_source_overlay
+# Window 4: SLAM
+tmux new-window -t "$SESSION" -n "slam"
+tmux send-keys -t "$SESSION:slam" "cd $WS && source install/setup.bash && ros2 launch mobile slam_toolbox.launch.py" C-m
 
-  echo "[bringup] Starting encoder + imu (logs in $LOGDIR)"
+# Window 5: Bringup
+tmux new-window -t "$SESSION" -n "bringup"
+tmux send-keys -t "$SESSION:bringup" "cd $WS && source install/setup.bash && ros2 launch mobile bring_up.launch.py" C-m
 
-  # Encoder
-  (
-    set -euo pipefail
-    cd "$WS"
-    set +u; source install/setup.bash; set -u
-    echo $$ > "$PIDDIR/encoder.pid"
-    exec python3 "$ENCODER_PY" >>"$LOGDIR/encoder.log" 2>&1
-  ) &
-
-  # IMU
-  (
-    set -euo pipefail
-    cd "$WS"
-    set +u; source install/setup.bash; set -u
-    echo $$ > "$PIDDIR/imu.pid"
-    exec ros2 run wt901_ros2 wt901_node >>"$LOGDIR/imu.log" 2>&1
-  ) &
-
-  echo "[bringup] Started:"
-  echo "  - encoder: tail -f $LOGDIR/encoder.log"
-  echo "  - imu:     tail -f $LOGDIR/imu.log"
-  echo "  - stop:    $0 stop"
-}
-
-# ---------- Main ----------
-case "${1:-start}" in
-  start)
-    trap 'stop_all; exit 0' INT TERM
-    start_all
-    # giữ process sống để bắt Ctrl+C
-    while true; do sleep 1; done
-    ;;
-  stop)
-    stop_all
-    ;;
-  *)
-    echo "Usage:"
-    echo "  $0        # start"
-    echo "  $0 stop   # stop all"
-    exit 1
-    ;;
-esac
+echo "Done."
+echo "Attach: tmux attach -t $SESSION"
+echo "Detach (giữ chạy nền): Ctrl-b rồi nhấn d"

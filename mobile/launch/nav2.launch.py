@@ -9,7 +9,7 @@ def generate_launch_description():
     pkg_mobile = get_package_share_directory('mobile')
     pkg_nav2 = get_package_share_directory('nav2_bringup')
 
-    map_file = os.path.join(pkg_mobile, 'map', 'map.yaml')
+    map_file = os.path.join(pkg_mobile, 'map', 'map7.yaml')
     params_file = os.path.join(pkg_mobile, 'config', 'nav2_params.yaml')
 
      #  use_sim_time = LaunchConfiguration('use_sim_time', default='true')

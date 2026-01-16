@@ -10,6 +10,8 @@ void wt901_step(void);
 //int  wt901_set_zero(void);
 int  wt901_get_angle(float *roll, float *pitch, float *yaw);
 
+int wt901_get_gyro(float *gx_dps, float *gy_dps, float *gz_dps);
+
 #ifdef __cplusplus
 }
 #endif
