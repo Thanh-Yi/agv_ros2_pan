@@ -42,4 +42,9 @@ install(PROGRAMS
   scripts/goal_markers.py
   DESTINATION lib/${PROJECT_NAME}
 )
+install(PROGRAMS
+  scripts/map_odom.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME map_odom
+)
 ament_package()

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# chu y code nay dung lại code cu cua TIEN, code mới nằm ở V0
 import time
 import struct
 import serial

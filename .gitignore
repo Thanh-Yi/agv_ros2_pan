@@ -1,0 +1,37 @@
+# ROS2
+build/
+install/
+log/
+
+**/build/
+**/install/
+**/log/
+
+# Python
+__pycache__/
+*.pyc
+
+# Database
+*.db
+
+# Bag
+*.bag
+*.bag.active
+
+# VSCode
+.vscode/
+
+# SDK
+BerxelSDK-Linux*
+OrbbecSDK_ROS2/
+berxel_camera_ros2/
+
+# Logs
+mobile/Log/
+
+# Archives
+*.zip
+*.tar.gz
+mobile/mybag/
+mobile/mybag/
+realsense-ros/

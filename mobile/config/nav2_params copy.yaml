@@ -1,0 +1,386 @@
+amcl:
+  ros__parameters:
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+    base_frame_id: "base_footprint"
+    introspection_mode: "disabled"
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    global_frame_id: "map"
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 40.0
+    laser_min_range: 0.37
+    laser_model_type: "likelihood_field"
+    max_beams: 1800
+    max_particles: 1000
+    min_particles: 500
+    odom_frame_id: "odom"
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    scan_topic: /scan
+    transform_tolerance: 1.0
+    update_min_a: 0.05
+    update_min_d: 0.05
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    map_topic: map
+    set_initial_pose: true        # Robot phải đứng tại vị trí gốc SLAM khi bật navigation
+    # set_initial_pose: false     # Dùng khi muốn AMCL tự định vị toàn bản đồ
+    always_reset_initial_pose: false
+    first_map_only: false
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
+
+amcl_map_client:
+  ros__parameters:
+    use_sim_time: false
+
+amcl_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+bt_navigator:
+  ros__parameters:
+    use_sim_time: false
+    odom_topic: /odometry/filtered
+    default_bt_xml_filename: "navigate_w_smoother_replanning_and_recovery.xml"
+    global_frame: map
+    robot_base_frame: base_link
+    enable_groot_monitoring: true
+    groot_zmq_publisher_port: 1666
+    groot_zmq_server_port: 1667
+    plugin_lib_names:
+    - nav2_compute_path_to_pose_action_bt_node
+    - nav2_compute_path_through_poses_action_bt_node
+    - nav2_follow_path_action_bt_node
+    - nav2_back_up_action_bt_node
+    - nav2_spin_action_bt_node
+    - nav2_wait_action_bt_node
+    - nav2_clear_costmap_service_bt_node
+    - nav2_is_stuck_condition_bt_node
+    - nav2_goal_reached_condition_bt_node
+    - nav2_goal_updated_condition_bt_node
+    - nav2_globally_updated_goal_condition_bt_node
+    - nav2_initial_pose_received_condition_bt_node
+    - nav2_reinitialize_global_localization_service_bt_node
+    - nav2_rate_controller_bt_node
+    - nav2_distance_controller_bt_node
+    - nav2_speed_controller_bt_node
+    - nav2_truncate_path_action_bt_node
+    - nav2_truncate_path_local_action_bt_node
+    - nav2_goal_updater_node_bt_node
+    - nav2_recovery_node_bt_node
+    - nav2_pipeline_sequence_bt_node
+    - nav2_round_robin_node_bt_node
+    - nav2_transform_available_condition_bt_node
+    - nav2_time_expired_condition_bt_node
+    - nav2_distance_traveled_condition_bt_node
+    - nav2_single_trigger_bt_node
+    - nav2_remove_passed_goals_action_bt_node
+    - nav2_goal_checker_selector_bt_node
+    - nav2_controller_selector_bt_node
+    - nav2_planner_selector_bt_node
+    - nav2_controller_cancel_bt_node
+    - nav2_path_longer_on_approach_bt_node
+    - nav2_wait_cancel_bt_node
+    - nav2_spin_cancel_bt_node
+    - nav2_back_up_cancel_bt_node
+
+bt_navigator_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+
+map_server:
+  ros__parameters:
+    use_sim_time: false
+    yaml_filename: /home/pan/ros2_ws/src/mobile/map/map7.yaml
+
+planner_server:
+  ros__parameters:
+    use_sim_time: false
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      use_astar: True
+      allow_unknown: True
+      tolerance: 0.25
+
+lifecycle_manager:
+  ros__parameters:
+    use_sim_time: false
+    autostart: true
+    node_names: ['map_server', 'amcl', 'planner_server', 'controller_server', 'smoother_server', 'recoveries_server', 'bt_navigator']
+
+recoveries_server:
+  ros__parameters:
+    use_sim_time: false
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    recovery_plugins: ["spin", "backup", "wait"]
+    spin:
+      plugin: "nav2_recoveries/Spin"
+    backup:
+      plugin: "nav2_recoveries/BackUp"
+    wait:
+      plugin: "nav2_recoveries/Wait"
+
+# =====================================
+# GLOBAL COSTMAP
+# =====================================
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      use_sim_time: false
+      global_frame: map
+      robot_base_frame: base_footprint
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      width: 20
+      height: 20
+      resolution: 0.05
+      footprint: "[ [0.35, 0.223], [0.35, -0.223], [-0.35, -0.223], [-0.35, 0.0.223] ]"
+      rolling_window: False
+      always_send_full_costmap: True
+      plugins: ["static_layer", "obstacle_layer", "keepout_filter", "inflation_layer"]
+
+      keepout_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/map_editor/filter_info_keepout"
+
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_topic: /map
+        subscribe_to_updates: True
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          inf_is_valid: True
+          obstacle_range: 12.0
+          raytrace_range: 12.75
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.55    # tăng từ 0.4 → 0.55 (margin an toàn lớn hơn)
+        cost_scaling_factor: 2.0  # giảm từ 3.0 → 2.0 (gradient mềm hơn, dễ lập lịch hơn)
+
+  global_costmap_client:
+    ros__parameters:
+      use_sim_time: false
+  global_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: false
+
+# =====================================
+# LOCAL COSTMAP
+# =====================================
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: false
+      global_frame: odom
+      robot_base_frame: base_footprint
+      update_frequency: 10.0
+      publish_frequency: 5.0
+      width: 20
+      height: 20
+      resolution: 0.05
+      footprint: "[ [0.35, 0.0.223], [0.35, -0.0.223], [-0.35, -0.0.223], [-0.35, 0.0.223] ]"
+      rolling_window: True
+      always_send_full_costmap: True
+      plugins: ["obstacle_layer", "keepout_filter", "inflation_layer", "speed_filter"]
+
+      keepout_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/map_editor/filter_info_keepout"
+
+      speed_filter:
+        plugin: "nav2_costmap_2d::SpeedFilter"
+        enabled: True
+        filter_info_topic: "/map_editor/filter_info_speed"
+        speed_limit_topic: "/speed_limit_nav2"
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan cam_high cam_low
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          inf_is_valid: True
+          obstacle_range: 12.0
+          raytrace_range: 12.75
+        cam_high:
+          topic: /camera_high/camera_high/depth/color/points
+          data_type: "PointCloud2"
+          marking: True
+          clearing: False           # FOV camera hẹp hơn LiDAR 360°, không xóa mark LiDAR
+          min_obstacle_height: 0.27 # sát trên LiDAR (0.244m) để không bỏ sót vùng 0.244→0.35m
+          max_obstacle_height: 2.0  # phát hiện vật cao hơn camera
+          obstacle_max_range: 3.5
+          obstacle_min_range: 0.36  # = half-length robot + margin, tránh tự detect
+          raytrace_max_range: 4.0
+          raytrace_min_range: 0.36
+          observation_persistence: 0.5
+        cam_low:
+          topic: /camera_low/depth/points
+          data_type: "PointCloud2"
+          marking: True
+          clearing: False           # FOV giới hạn phía trước, không xóa mark LiDAR
+          min_obstacle_height: 0.03 # phát hiện vật sát sàn (bậc thang, dây cáp ≥3cm)
+          max_obstacle_height: 0.24 # sát dưới LiDAR (0.244m), đóng kín khe hở
+          obstacle_max_range: 2.0   # camera cúi từ 1.02m, tầm hiệu quả ~2m
+          obstacle_min_range: 0.25  # tránh detect chính sàn dưới robot
+          raytrace_max_range: 2.2
+          raytrace_min_range: 0.25
+          observation_persistence: 0.5
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.55    # tăng từ 0.4 → 0.55 (margin an toàn lớn hơn)
+        cost_scaling_factor: 2.0  # giảm từ 3.0 → 2.0 (gradient mềm hơn)
+
+  local_costmap_client:
+    ros__parameters:
+      use_sim_time: false
+  local_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: false
+
+# =====================================
+# SMOOTHER SERVER (Constrained Smoother)
+# =====================================
+smoother_server:
+  ros__parameters:
+    use_sim_time: false
+    smoother_plugins: ["SmoothPath"]
+    SmoothPath:
+      plugin: "nav2_constrained_smoother/ConstrainedSmoother"
+      reversing_enabled: false
+      path_downsampling_factor: 2
+      path_upsampling_factor: 2
+      keep_start_orientation: true
+      keep_goal_orientation: true
+      w_smooth: 8000000.0
+      w_dist: 0.75
+      w_cost: 0.2
+      w_cost_cusp_multiplier: 2.0
+      cusp_zone_length: 2.0
+      optimizer:
+        max_iterations: 100
+        debug_optimizer: false
+        gradient_tol: 1.0e-5
+        fn_tol: 1.0e-10
+        param_tol: 1.0e-15
+
+# =====================================
+# CONTROLLER SERVER (DWB)
+# =====================================
+controller_server:
+  ros__parameters:
+    use_sim_time: false
+    speed_limit_topic: "/speed_limit_nav2"
+    odom_topic: /odometry/filtered
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.01
+    min_y_velocity_threshold: 0.0
+    min_theta_velocity_threshold: 0.01
+    progress_checker_plugins: "progress_checker"
+    goal_checker_plugins: ["goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.05
+      movement_time_allowance: 15.0
+
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.2
+      stateful: False
+
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: True
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.4
+      max_vel_y: 0.0
+      max_vel_theta: 0.30           # giữ nguyên (conservative cho robot thực)
+      min_speed_xy: 0.0
+      max_speed_xy: 0.4
+      min_speed_theta: 0.0
+      acc_lim_x: 0.1               # giữ nguyên (conservative cho robot thực)
+      acc_lim_y: 0.0
+      acc_lim_theta: 0.18          # giữ nguyên (conservative cho robot thực)
+      decel_lim_x: -0.1
+      decel_lim_y: 0.0
+      decel_lim_theta: -0.1
+      vx_samples: 60
+      vy_samples: 30
+      vtheta_samples: 60
+      sim_time: 2.5                 # tăng từ 1.7 → 2.5 (planning xa hơn, bám path tốt hơn)
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.15
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.05
+      short_circuit_trajectory_evaluation: True
+      limit_vel_cmd_in_traj: False
+      stateful: False
+      slowdown_factor: 0.5
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      BaseObstacle.scale: 0.02      # sửa từ 50.02 → 0.02 (giá trị chuẩn, khớp mô phỏng)
+      PathAlign.scale: 24.0         # tăng từ 2.0 → 24.0 (bám path tốt hơn)
+      GoalAlign.scale: 6.0
+      PathAlign.forward_point_distance: 0.5
+      GoalAlign.forward_point_distance: 0.3
+      PathDist.scale: 32.0          # tăng từ 2.0 → 32.0 (bám path tốt hơn)
+      GoalDist.scale: 6.0
+      RotateToGoal.scale: 32.0      # tăng từ 8.0 → 32.0 (xoay về goal tốt hơn)
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: false
+    smoothing_frequency: 20.0
+    feedback: "CLOSED_LOOP"
+    odom_topic: "/odometry/filtered"
+    max_velocity: [0.4, 0.0, 0.5]
+    min_velocity: [-0.4, 0.0, -0.5]
+    velocity_timeout: 1.0
+    scale_velocities: false
+    deadband_velocity: [0.01, 0.0, 0.01]

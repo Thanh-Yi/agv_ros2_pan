@@ -1,0 +1,42 @@
+canopen:
+  registers:
+    controlword:
+      index: 0x6040
+      sub: 0x00
+    mode:
+      index: 0x6060
+      sub: 0x00
+    target_velocity:
+      index: 0x60FF
+      sub: 0x00
+    actual_velocity:
+      index: 0x60F9
+      sub: 0x19
+    deceleration:
+      index: 0x6084
+      sub: 0x00
+    error:
+      index: 0x2601
+      sub: 0x00
+
+driver:
+  deceleration:
+    low_speed: 226
+    high_speed: 67
+
+  thresholds:
+    low: 0.4
+    high: 0.5
+
+robot:
+  wheel_radius: 0.085
+  wheel_base: 0.35
+  max_rpm: 200
+
+nodes:
+  left: 1
+  right: 2
+
+comm:
+  port: "/dev/ch34x_can"
+  baudrate: 2000000

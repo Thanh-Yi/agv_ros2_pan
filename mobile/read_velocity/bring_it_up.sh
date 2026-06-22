@@ -105,8 +105,7 @@ tmux send-keys -t "$SESSION:imu" \
   "tmux wait-for STAGE_IMU; \
    cd \"$WS\" && colcon build && source install/setup.bash && \
    tmux wait-for -S IMU_OK; \
-   flock -n /tmp/lock_imu.lock ros2 run wt901_ros2 wt901_node --ros-args -p port:=\"$IMU_DEV\"" C-m
-
+   flock -n /tmp/lock_imu.lock python3 \"$WS/src/mobile/read_velocity/imu.py\" --ros-args -p port:=\"$IMU_DEV\" -p baud:=115200" C-m
 # -----------------------
 # Window: LiDAR (build bluesea2 + run lidar)
 # -----------------------
@@ -128,14 +127,25 @@ tmux send-keys -t "$SESSION:can" \
    flock -n /tmp/lock_can.lock python3 \"$CAN_PY\" \"$CAN_DEV\"" C-m
 
 # -----------------------
-# Window: SLAM
+# Window: CAMERA (Orbbec)
 # -----------------------
-tmux new-window -t "$SESSION" -n "slam"
-tmux send-keys -t "$SESSION:slam" \
-  "tmux wait-for STAGE_SLAM; \
+tmux new-window -t "$SESSION" -n "camera"
+tmux send-keys -t "$SESSION:camera" \
+  "tmux wait-for STAGE_CAMERA; \
    cd \"$WS\" && source install/setup.bash && \
-   tmux wait-for -S SLAM_OK; \
-   ros2 launch mobile slam_toolbox.launch.py" C-m
+   tmux wait-for -S CAMERA_OK; \
+   ros2 launch orbbec_camera gemini_e.launch.py" C-m
+
+# -----------------------
+# Window: ekf
+# -----------------------
+tmux new-window -t "$SESSION" -n "ekf"
+tmux send-keys -t "$SESSION:ekf" \
+  "tmux wait-for STAGE_ekf; \
+   cd \"$WS\" && source install/setup.bash && \
+   tmux wait-for -S ekf_OK; \
+   ros2 launch mobile ekf.launch.py" C-m
+
 
 # -----------------------
 # Window: BRINGUP
@@ -150,7 +160,8 @@ tmux send-keys -t "$SESSION:bringup" \
 # =======================
 # Orchestrate order
 # =======================
-log "[3/4] Run order: IMU -> LiDAR -> CAN -> SLAM -> BRINGUP"
+# log "[3/4] Run order: IMU -> LiDAR -> CAN -> ekf -> BRINGUP"
+log "[3/4] Run order: IMU -> LiDAR -> CAN -> CAMERA -> EKF-> BRINGUP"
 
 tmux wait-for -S STAGE_IMU
 timeout "${TIMEOUT_IMU_BUILD}s" tmux wait-for IMU_OK || die "IMU stage timed out"
@@ -161,8 +172,11 @@ timeout "${TIMEOUT_LIDAR_BUILD}s" tmux wait-for LIDAR_OK || die "LiDAR stage tim
 tmux wait-for -S STAGE_CAN
 timeout "${TIMEOUT_CAN_START}s" tmux wait-for CAN_OK || die "CAN stage timed out"
 
-tmux wait-for -S STAGE_SLAM
-timeout "${TIMEOUT_SLAM_START}s" tmux wait-for SLAM_OK || die "SLAM stage timed out"
+tmux wait-for -S STAGE_CAMERA
+timeout 40s tmux wait-for CAMERA_OK || die "CAMERA stage timed out"
+
+tmux wait-for -S STAGE_ekf
+timeout "${TIMEOUT_SLAM_START}s" tmux wait-for ekf_OK || die "ekf stage timed out"
 
 tmux wait-for -S STAGE_BRINGUP
 timeout "${TIMEOUT_BRINGUP_START}s" tmux wait-for BRINGUP_OK || die "BRINGUP stage timed out"

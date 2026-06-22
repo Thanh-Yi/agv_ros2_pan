@@ -253,6 +253,9 @@
     <origin
       xyz="0.00086811 -1.7374E-05 0.2438"
       rpy="0 0 0" />
+    <!-- <origin
+      xyz="-0.00086811 -1.7374E-05 0.1388"
+      rpy="0 0 0" /> -->
     <parent
       link="base_link" />
     <child
@@ -306,6 +309,9 @@
     <origin
       xyz="0 0 0.0363"
       rpy="0 0 0" />
+    <!-- <origin
+      xyz="0 0 0.095"
+      rpy="0 0 0" /> -->
     <parent
       link="base_link" />
     <child
@@ -773,7 +779,121 @@
     <dynamics
       friction="0" />
   </joint>
+
+  <!-- Camera High body -->
+  <link name="camera_high_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.03"/>
+      </geometry>
+      <material name="camera_green">
+        <color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="camera_high_joint" type="fixed">
+    <!-- <origin xyz="0.325 0 0.87" rpy="0 0 0"/> -->
+    <!-- <origin xyz="0.325 0 0.82" rpy="0 0 0"/> -->
+     <origin xyz="0.325 0 0.33" rpy="0 0 0"/>
+     <!-- <origin xyz="0.325 0 0.225" rpy="0 0 0"/ -->
+    <parent link="base_link"/>
+    <child link="camera_high_link"/>
+  </joint>
+
+  <!-- ================= DEPTH ================= -->
+
+  <!-- THÊM frame trung gian (CỰC KỲ QUAN TRỌNG) -->
+  <link name="camera_high_depth_frame"/>
+
+  <joint name="camera_high_depth_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="camera_high_link"/>
+    <child link="camera_high_depth_frame"/>
+  </joint>
+
+
+  <link name="camera_high_depth_optical_frame"/>
+
+  <joint name="camera_high_depth_optical_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.570796 0 -1.570796"/>
+    <parent link="camera_high_depth_frame"/>
+    <child link="camera_high_depth_optical_frame"/>
+  </joint>
+
+  <!-- =================Camera high COLOR================= -->
+
+  <link name="camera_high_color_frame"/>
+
+  <joint name="camera_high_color_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="camera_high_link"/>
+    <child link="camera_high_color_frame"/>
+  </joint>
+
+  <link name="camera_high_color_optical_frame"/>
+
+  <joint name="camera_high_color_optical_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.570796 0 -1.570796"/>
+    <parent link="camera_high_color_frame"/>
+    <child link="camera_high_color_optical_frame"/>
+  </joint>
+
+  <!-- ================= Thêm link cho camera thấp ================= -->
+  <link name="camera_low_link">
+    <visual>
+      <geometry>
+        <box size="0.09 0.025 0.025"/>
+      </geometry>
+      <material name="camera_low_green">
+        <color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+  </link>
+  <!-- ================= Gắn vào robot ================= -->
+  <joint name="camera_low_joint" type="fixed">
+    <origin xyz="0.375 0.0 1.1" rpy="0.0 0.785 0.0"/>
+    <!-- <origin xyz="0.375 0.0 0.995" rpy="0.0 0.785 0.0"/> -->
+    <!-- <origin xyz="0.375 0.0 0.7" rpy="0.0 0.785 0.0"/> -->
+    <parent link="base_link"/>
+    <child link="camera_low_link"/>
+  </joint>
+
+  <!-- ================= Depth frame ================= -->
+  <link name="camera_low_depth_frame"/>
+
+  <joint name="camera_low_depth_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="camera_low_link"/>
+    <child link="camera_low_depth_frame"/>
+  </joint>
+
+  <!-- ================= Optical frame================= -->
+  <link name="camera_low_depth_optical_frame"/>
+
+  <joint name="camera_low_depth_optical_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.570796 0 -1.570796"/>
+    <parent link="camera_low_depth_frame"/>
+    <child link="camera_low_depth_optical_frame"/>
+  </joint>
   
+  <!-- ================= IR frame ================= -->
+  <link name="camera_low_ir_frame"/>
+
+  <joint name="camera_low_ir_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="camera_low_depth_frame"/>
+    <child link="camera_low_ir_frame"/>
+  </joint>
+
+  <!-- ================= ir Optical frame================= -->
+  <link name="camera_low_ir_optical_frame"/>
+
+  <joint name="camera_low_ir_optical_frame_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.570796 0 -1.570796"/>
+    <parent link="camera_low_ir_frame"/>
+    <child link="camera_low_ir_optical_frame"/>
+  </joint>
    <!-- Gazebo plugin cho LiDAR -->
   <gazebo reference="laser">
     <sensor type="ray" name="laser_sensor">
@@ -896,7 +1016,7 @@
     </plugin>
   </gazebo>
 
-  <!-- <gazebo>
+  <gazebo>
     <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
       <ros>
         <namespace>/</namespace>
@@ -918,7 +1038,7 @@
       <joint_name>phaisau_tren_jn</joint_name>
       <joint_name>phaisau_duoi_jn</joint_name>
     </plugin>
-  </gazebo> -->
+  </gazebo>
 
   
 </robot>
